@@ -39,8 +39,8 @@ struct Munro {
     var smcSection: Int
     var rhbSection: String
     var section: Double
-    var heightInMetres: Int
-    var heightInFeet: Int
+    var heightInMetres: Double
+    var heightInFeet: Double
     var mapOneFiftyScale: String
     var mapOneTwentyFiveScale: String
     var gridReference: String
@@ -59,37 +59,31 @@ extension Munro {
         case typeMismatch(entryName: String)
     }
     
-    init?(_ csvEntry: String) throws {
-        let split = csvEntry.split(separator: ",")
-        guard split.count > 0 else {
-            throw Munro.Error.nonCSVString
-        }
-        
-        try self.init(split)
-    }
-    
-    init?<T>(_ entries: [T]) throws where T: StringProtocol {
-        guard entries.count == 15 else {
+    init<T>(_ entries: [T]) throws where T: StringProtocol {
+        guard entries.count == 29 else {
             throw Munro.Error.missingEntries
         }
         
         func value<T: StringProtocol, V>(value: T, as type: V.Type) throws -> V {
             
-            let finalValue: V
+            let finalValue: V?
             switch V.self {
             case is String.Type:
-                finalValue = String(value) as! V
+                finalValue = String(value) as? V
             case is Int.Type:
-                finalValue = Int(value) as! V
+                finalValue = Int(value) as? V
             case is Double.Type:
-                finalValue = Double(value) as! V
+                finalValue = Double(value) as? V
             case is URL.Type:
-                finalValue = URL(string: String(value)) as! V
+                finalValue = URL(string: String(value).replacingOccurrences(of: "\"", with: "")) as? V
             default:
                 throw Munro.Error.missingEntries
             }
             
-            return finalValue
+            guard let unwrapped = finalValue else {
+                throw Munro.Error.typeMismatch(entryName: "dunno")
+            }
+            return unwrapped
         }
         
         
@@ -102,8 +96,8 @@ extension Munro {
         smcSection = try value(value: entries[6], as: Int.self)
         rhbSection = try value(value: entries[7], as: String.self)
         section = try value(value: entries[8], as: Double.self)
-        heightInMetres = try value(value: entries[9], as: Int.self)
-        heightInFeet = try value(value: entries[10], as: Int.self)
+        heightInMetres = try value(value: entries[9], as: Double.self)
+        heightInFeet = try value(value: entries[10], as: Double.self)
         mapOneFiftyScale = try value(value: entries[11], as: String.self)
         mapOneTwentyFiveScale = try value(value: entries[12], as: String.self)
         gridReference = try value(value: entries[13], as: String.self)

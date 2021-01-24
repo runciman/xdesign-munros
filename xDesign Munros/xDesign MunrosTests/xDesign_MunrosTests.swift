@@ -10,24 +10,73 @@ import XCTest
 
 class xDesign_MunrosTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    func testModelCreation() {
+        guard let file =  Bundle(for: type(of: self)).url(forResource: "munrotab_v6.2", withExtension: "csv") else {
+            XCTFail()
+            return
         }
+        
+        var munros = [Munro]()
+        do {
+            let csvData = try Data(contentsOf: file)
+            let csv = String(data: csvData, encoding: .ascii)!
+            let lines = csv.components(separatedBy: .newlines).compactMap({ $0 != "" ? $0 : nil })
+            let components = lines.map({$0.components(separatedBy: ",")})
+
+            
+            var quoteEscaped = [[String]]()
+            
+            for line in components {
+                var searchingForEndToken = false
+                let escaped: [String] = line.reduce([]) { (ongoing, component) in
+                    let appendToPrevious: (String) -> [String] = { value in
+                        var result = ongoing
+                        result[result.count - 1] = result[result.count - 1] + "," + value
+                        return result
+                    }
+                    
+                    let createNewEntry: (String) -> [String] = { value in
+                        var result = ongoing
+                        result.append(value)
+                        return result
+                    }
+                    
+                    if component.hasPrefix("\"") {
+                        let finalValue = String(component.suffix(from: component.index(after: component.startIndex)))
+                        searchingForEndToken = true
+                        return createNewEntry(finalValue)
+                    } else if component.hasSuffix("\"") {
+                        searchingForEndToken = false
+                        let finalValue = String(component.prefix(upTo: component.index(before: component.endIndex)))
+                        return appendToPrevious(finalValue)
+                    } else {
+                        if searchingForEndToken {
+                            return appendToPrevious(component)
+                        } else {
+                            return createNewEntry(component)
+                        }
+                    }
+                }
+                quoteEscaped.append(escaped)
+            }
+            
+
+            for line in quoteEscaped {
+                do {
+                    let munro = try Munro(line)
+                    munros.append(munro)
+                } catch {
+                    print(error)
+                }
+
+            }
+        } catch {
+            XCTFail()
+            print(error)
+        }
+        
+        XCTAssertEqual(munros.count, 602)
+        
     }
 
 }
