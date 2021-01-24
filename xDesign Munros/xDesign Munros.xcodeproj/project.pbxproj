@@ -10,6 +10,8 @@
 		7EA9A7C225BDB93000FEBF7D /* xDesign_Munros.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EA9A7B825BDB93000FEBF7D /* xDesign_Munros.framework */; };
 		7EA9A7C725BDB93000FEBF7D /* xDesign_MunrosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA9A7C625BDB93000FEBF7D /* xDesign_MunrosTests.swift */; };
 		7EA9A7C925BDB93000FEBF7D /* xDesign_Munros.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EA9A7BB25BDB93000FEBF7D /* xDesign_Munros.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7EA9A7D525BDB97400FEBF7D /* munrotab_v6.2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 7EA9A7D425BDB97400FEBF7D /* munrotab_v6.2.csv */; };
+		7EA9A7D925BDBB5700FEBF7D /* Munro.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA9A7D825BDBB5700FEBF7D /* Munro.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +31,8 @@
 		7EA9A7C125BDB93000FEBF7D /* xDesign MunrosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "xDesign MunrosTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7EA9A7C625BDB93000FEBF7D /* xDesign_MunrosTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = xDesign_MunrosTests.swift; sourceTree = "<group>"; };
 		7EA9A7C825BDB93000FEBF7D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7EA9A7D425BDB97400FEBF7D /* munrotab_v6.2.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = munrotab_v6.2.csv; sourceTree = "<group>"; };
+		7EA9A7D825BDBB5700FEBF7D /* Munro.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Munro.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +77,8 @@
 			children = (
 				7EA9A7BB25BDB93000FEBF7D /* xDesign_Munros.h */,
 				7EA9A7BC25BDB93000FEBF7D /* Info.plist */,
+				7EA9A7D425BDB97400FEBF7D /* munrotab_v6.2.csv */,
+				7EA9A7D825BDBB5700FEBF7D /* Munro.swift */,
 			);
 			path = "xDesign Munros";
 			sourceTree = "<group>";
@@ -147,6 +153,7 @@
 				TargetAttributes = {
 					7EA9A7B725BDB93000FEBF7D = {
 						CreatedOnToolsVersion = 12.3;
+						LastSwiftMigration = 1230;
 					};
 					7EA9A7C025BDB93000FEBF7D = {
 						CreatedOnToolsVersion = 12.3;
@@ -177,6 +184,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7EA9A7D525BDB97400FEBF7D /* munrotab_v6.2.csv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -194,6 +202,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7EA9A7D925BDBB5700FEBF7D /* Munro.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,6 +350,7 @@
 		7EA9A7CD25BDB93000FEBF7D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 6N7BTNQR6X;
@@ -357,6 +367,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.xdesign.xDesign-Munros";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -365,6 +376,7 @@
 		7EA9A7CE25BDB93000FEBF7D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 6N7BTNQR6X;
@@ -389,6 +401,7 @@
 		7EA9A7D025BDB93000FEBF7D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6N7BTNQR6X;
 				INFOPLIST_FILE = "xDesign MunrosTests/Info.plist";
@@ -407,6 +420,7 @@
 		7EA9A7D125BDB93000FEBF7D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6N7BTNQR6X;
 				INFOPLIST_FILE = "xDesign MunrosTests/Info.plist";
