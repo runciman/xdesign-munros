@@ -15,11 +15,9 @@ enum SearchScope<T> {
 class MunroDataSource {
     
     
-    init(from csv: URL) {
-        
-    }
-    
     func munros(for reqquest: MunroSearchRequest) -> [MunroResult] {
+        
+
         return []
     }
 }
@@ -41,10 +39,9 @@ struct MunroResult {
     let gridReference: String
 }
 
-class MunroSearchRequest {
+struct MunroSearchRequest {
     var fetchLimit: SearchScope<Int> = .full
     var hillCategory: SearchScope<Munro.MunroClassification> = .full
     var maximumHeight: SearchScope<Int> = .full
     var minimumHeight: SearchScope<Int> = .full
-    var sortCriteria: SortDescriptor<MunroResult, String> = SortDescriptor(keyPath: \MunroResult.name, direction: .ascending)
 }
