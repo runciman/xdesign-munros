@@ -13,6 +13,7 @@
 		7EA9A7D525BDB97400FEBF7D /* munrotab_v6.2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 7EA9A7D425BDB97400FEBF7D /* munrotab_v6.2.csv */; };
 		7EA9A7D925BDBB5700FEBF7D /* Munro.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA9A7D825BDBB5700FEBF7D /* Munro.swift */; };
 		7EA9A7E025BDD96300FEBF7D /* munrotab_v6.2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 7EA9A7D425BDB97400FEBF7D /* munrotab_v6.2.csv */; };
+		7EA9A7E425C0B97000FEBF7D /* MunroDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA9A7E325C0B97000FEBF7D /* MunroDataSource.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +35,7 @@
 		7EA9A7C825BDB93000FEBF7D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7EA9A7D425BDB97400FEBF7D /* munrotab_v6.2.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = munrotab_v6.2.csv; sourceTree = "<group>"; };
 		7EA9A7D825BDBB5700FEBF7D /* Munro.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Munro.swift; sourceTree = "<group>"; };
+		7EA9A7E325C0B97000FEBF7D /* MunroDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MunroDataSource.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +82,7 @@
 				7EA9A7BC25BDB93000FEBF7D /* Info.plist */,
 				7EA9A7D425BDB97400FEBF7D /* munrotab_v6.2.csv */,
 				7EA9A7D825BDBB5700FEBF7D /* Munro.swift */,
+				7EA9A7E325C0B97000FEBF7D /* MunroDataSource.swift */,
 			);
 			path = "xDesign Munros";
 			sourceTree = "<group>";
@@ -204,6 +207,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7EA9A7E425C0B97000FEBF7D /* MunroDataSource.swift in Sources */,
 				7EA9A7D925BDBB5700FEBF7D /* Munro.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
