@@ -147,7 +147,7 @@ struct SortDescriptor<K, V>: Hashable {
     let direction: SortDirection
 }
 
-struct MunroResult {
+struct MunroResult: Equatable {
     let name: String
     let height: Double
     let category: Munro.MunroClassification

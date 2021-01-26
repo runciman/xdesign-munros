@@ -81,7 +81,7 @@ extension Munro {
             }
             
             guard let unwrapped = finalValue else {
-                throw Munro.Error.typeMismatch(entryName: "dunno")
+                throw Munro.Error.typeMismatch(entryName: "Found \(T.self) instead of \(V.self)")
             }
             return unwrapped
         }
