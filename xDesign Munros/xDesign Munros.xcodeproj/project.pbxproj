@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7E0FF2F625C21C2300E950CB /* CSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0FF2F525C21C2300E950CB /* CSVParser.swift */; };
 		7EA9A7C225BDB93000FEBF7D /* xDesign_Munros.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EA9A7B825BDB93000FEBF7D /* xDesign_Munros.framework */; };
 		7EA9A7C725BDB93000FEBF7D /* xDesign_MunrosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA9A7C625BDB93000FEBF7D /* xDesign_MunrosTests.swift */; };
 		7EA9A7C925BDB93000FEBF7D /* xDesign_Munros.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EA9A7BB25BDB93000FEBF7D /* xDesign_Munros.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -27,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7E0FF2F525C21C2300E950CB /* CSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVParser.swift; sourceTree = "<group>"; };
 		7EA9A7B825BDB93000FEBF7D /* xDesign_Munros.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = xDesign_Munros.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7EA9A7BB25BDB93000FEBF7D /* xDesign_Munros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = xDesign_Munros.h; sourceTree = "<group>"; };
 		7EA9A7BC25BDB93000FEBF7D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -83,6 +85,7 @@
 				7EA9A7D425BDB97400FEBF7D /* munrotab_v6.2.csv */,
 				7EA9A7D825BDBB5700FEBF7D /* Munro.swift */,
 				7EA9A7E325C0B97000FEBF7D /* MunroDataSource.swift */,
+				7E0FF2F525C21C2300E950CB /* CSVParser.swift */,
 			);
 			path = "xDesign Munros";
 			sourceTree = "<group>";
@@ -209,6 +212,7 @@
 			files = (
 				7EA9A7E425C0B97000FEBF7D /* MunroDataSource.swift in Sources */,
 				7EA9A7D925BDBB5700FEBF7D /* Munro.swift in Sources */,
+				7E0FF2F625C21C2300E950CB /* CSVParser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -374,6 +378,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.xdesign.xDesign-Munros";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -401,6 +406,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.xdesign.xDesign-Munros";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -418,7 +424,6 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.xdesign.xDesign-MunrosTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -438,7 +443,6 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.xdesign.xDesign-MunrosTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

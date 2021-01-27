@@ -10,24 +10,24 @@ import Foundation
 
 struct Munro {
     
-    enum MunroClassification: String {
+    enum Classification: String {
         case munro = "MUN"
         case top = "TOP"
         case none = ""
     }
     
     struct EraClassification {
-        let year1891: MunroClassification
-        let year1921: MunroClassification
-        let year1933: MunroClassification
-        let year1953: MunroClassification
-        let year1969: MunroClassification
-        let year1974: MunroClassification
-        let year1981: MunroClassification
-        let year1984: MunroClassification
-        let year1990: MunroClassification
-        let year1997: MunroClassification
-        let post1997: MunroClassification
+        let year1891: Classification
+        let year1921: Classification
+        let year1933: Classification
+        let year1953: Classification
+        let year1969: Classification
+        let year1974: Classification
+        let year1981: Classification
+        let year1984: Classification
+        let year1990: Classification
+        let year1997: Classification
+        let post1997: Classification
     }
     
     var runningNumber: Int
@@ -105,17 +105,17 @@ extension Munro {
         xCoordinate = try value(value: entries[15], as: Int.self)
         yCoordinate = try value(value: entries[16], as: Int.self)
         
-        let year1891 = MunroClassification(rawValue: String(entries[17])) ?? MunroClassification.none
-        let year1921 = MunroClassification(rawValue: String(entries[18])) ?? MunroClassification.none
-        let year1933 = MunroClassification(rawValue: String(entries[19])) ?? MunroClassification.none
-        let year1953 = MunroClassification(rawValue: String(entries[20])) ?? MunroClassification.none
-        let year1969 = MunroClassification(rawValue: String(entries[21])) ?? MunroClassification.none
-        let year1974 = MunroClassification(rawValue: String(entries[22])) ?? MunroClassification.none
-        let year1981 = MunroClassification(rawValue: String(entries[23])) ?? MunroClassification.none
-        let year1984 = MunroClassification(rawValue: String(entries[24])) ?? MunroClassification.none
-        let year1990 = MunroClassification(rawValue: String(entries[25])) ?? MunroClassification.none
-        let year1997 = MunroClassification(rawValue: String(entries[26])) ?? MunroClassification.none
-        let post1997 = MunroClassification(rawValue: String(entries[27])) ?? MunroClassification.none
+        let year1891 = Classification(rawValue: String(entries[17])) ?? Classification.none
+        let year1921 = Classification(rawValue: String(entries[18])) ?? Classification.none
+        let year1933 = Classification(rawValue: String(entries[19])) ?? Classification.none
+        let year1953 = Classification(rawValue: String(entries[20])) ?? Classification.none
+        let year1969 = Classification(rawValue: String(entries[21])) ?? Classification.none
+        let year1974 = Classification(rawValue: String(entries[22])) ?? Classification.none
+        let year1981 = Classification(rawValue: String(entries[23])) ?? Classification.none
+        let year1984 = Classification(rawValue: String(entries[24])) ?? Classification.none
+        let year1990 = Classification(rawValue: String(entries[25])) ?? Classification.none
+        let year1997 = Classification(rawValue: String(entries[26])) ?? Classification.none
+        let post1997 = Classification(rawValue: String(entries[27])) ?? Classification.none
         
         eraClassification = EraClassification(year1891: year1891, year1921: year1921, year1933: year1933, year1953: year1953, year1969: year1969, year1974: year1974, year1981: year1981, year1984: year1984, year1990: year1990, year1997: year1997, post1997: post1997)
         

@@ -7,64 +7,48 @@
 
 import Foundation
 
+/// Wraps up the idea of limiting values to a certain range,  without using tricks such as`"<0 is equivalent to ignoring a given field"`
 enum SearchScope<T> {
     case full
     case subset(T)
 }
 
-enum CSVParser {
-    enum Error: Swift.Error {
-        case invalidData
-        
+@frozen
+enum SortDirection {
+    case ascending
+    case descending
+}
+
+struct SortDescriptor: Hashable {
+    let key: MunroSearchRequest.SortKey
+    let direction: SortDirection
+}
+
+/// A `struct` representing the results of a search for Munros
+struct MunroResult: Equatable {
+    let name: String
+    let height: Double
+    let category: Munro.Classification
+    let gridReference: String
+}
+
+struct MunroSearchRequest {
+    
+    enum SortKey {
+        case name
+        case height
     }
     
-    static func csvElements(from url: URL) throws -> [[String]] {
-        do {
-            let csvData = try Data(contentsOf: url)
-            guard let csv = String(data: csvData, encoding: .ascii) else {
-                throw Error.invalidData
-            }
-            let lines = csv.components(separatedBy: .newlines).compactMap({ $0 != "" ? $0 : nil })
-            let components = lines.map({$0.components(separatedBy: ",")})
-            
-            var quoteEscaped = [[String]]()
-            
-            for line in components {
-                var searchingForEndToken = false
-                let escaped: [String] = line.reduce([]) { (ongoing, component) in
-                    let appendToPrevious: (String) -> [String] = { value in
-                        var result = ongoing
-                        result[result.count - 1] = result[result.count - 1] + "," + value
-                        return result
-                    }
-                    
-                    let createNewEntry: (String) -> [String] = { value in
-                        var result = ongoing
-                        result.append(value)
-                        return result
-                    }
-                    
-                    if component.hasPrefix("\"") {
-                        let finalValue = String(component.suffix(from: component.index(after: component.startIndex)))
-                        searchingForEndToken = true
-                        return createNewEntry(finalValue)
-                    } else if component.hasSuffix("\"") {
-                        searchingForEndToken = false
-                        let finalValue = String(component.prefix(upTo: component.index(before: component.endIndex)))
-                        return appendToPrevious(finalValue)
-                    } else {
-                        if searchingForEndToken {
-                            return appendToPrevious(component)
-                        } else {
-                            return createNewEntry(component)
-                        }
-                    }
-                }
-                quoteEscaped.append(escaped)
-            }
-            return quoteEscaped
-        }
+    enum MunroCategory {
+        case munro
+        case top
     }
+    
+    var fetchLimit: SearchScope<UInt> = .full
+    var hillCategory: SearchScope<MunroCategory> = .full
+    var maximumHeight: SearchScope<Double> = .full
+    var minimumHeight: SearchScope<Double> = .full
+    var sortDescriptors: [SortDescriptor] = []
 }
 
 class MunroDataSource {
@@ -76,6 +60,10 @@ class MunroDataSource {
     
     private let munros: [Munro]
     
+    
+    /// Creates an instance of `MunroDataSource`, which is populated by entries from a CSV file at a given URL
+    /// - Parameter csv: The `URL` of the CSV file to load
+    /// - Throws: If the `URL` is a not a local path, or if the CSV could not be parsed
     init(from csv: URL) throws {
         guard csv.isFileURL else {
             throw Error.invalidURL
@@ -96,6 +84,11 @@ class MunroDataSource {
         }
     }
     
+    
+    /// Returns instances of `MunroResult`, which match the criteria specified in the `MunroSearchRequest` instance
+    /// - Parameter request: The request to use as a basis for sorting and filtering the results
+    /// - Throws: Errors will be thrown if the request is not a valid request that can be performed in some way
+    /// - Returns: A `Collection` of  `MunroResult`
     func munros(for request: MunroSearchRequest) throws -> [MunroResult] {
         
         try validate(request)
@@ -112,7 +105,13 @@ class MunroDataSource {
             case .full:
                 return true
             case .subset(let category):
-                return (munro.eraClassification.post1997 == category)
+                switch (munro.eraClassification.post1997, category) {
+                //This effectively provides a mapping from the internal Munro.Classification type, to the MunroSearchRequest.Category type
+                case (.munro, .munro), (.top, .top):
+                    return true
+                default:
+                    return false
+                }
             }
         }
         
@@ -134,44 +133,51 @@ class MunroDataSource {
             }
         }
 
+        //By defining these as closures ahead of time, we can avoid having to do three seperate filter calls
         var workingCopy = munros.filter({ hillCategoryFilter(request, $0) && maxHeightFilter(request, $0) && minHeightFilter(request, $0) })
         
+        //By defining this here, it lets us reduce switching on sort direction at point of use
+        func comparator<T: Comparable>(for direction: SortDirection) -> (T, T) -> Bool {
+            switch direction {
+            case .ascending:
+                return { $0 < $1 }
+            case .descending:
+                return { $0 > $1 }
+            }
+        }
+        
+        // This will return nil if lhs and rhs are equal
+        func compare<V: Comparable>(lhs: Munro, rhs: Munro, by keyPath: KeyPath<Munro, V>, using comparator:(V, V) -> Bool) -> Bool? {
+            if lhs[keyPath: keyPath] == rhs[keyPath: keyPath] {
+                return nil
+            } else {
+                return comparator(lhs[keyPath: keyPath], rhs[keyPath: keyPath])
+            }
+        }
         
         workingCopy.sort { (lhs, rhs) -> Bool in
             for sortDescriptor in request.sortDescriptors {
-                switch (sortDescriptor.key, sortDescriptor.direction) {
-                case (.name, .ascending):
-                    if lhs.name == rhs.name {
+                
+                //Unfortunately, we can't define a general keypath here, as we would need a Type Erased Comparable box
+                // So, we need to call compare on each switch statement to avoid the compiler resolving conflicting types
+                switch (sortDescriptor.key) {
+                case (.name):
+                    guard let result = compare(lhs: lhs, rhs: rhs, by: \Munro.name, using: comparator(for: sortDescriptor.direction)) else {
                         continue
-                    } else {
-                        return lhs.name < rhs.name
                     }
-                case (.name, .descending):
-                    if lhs.name == rhs.name {
+                    return result
+                case (.height):
+                    guard let result = compare(lhs: lhs, rhs: rhs, by: \Munro.heightInMetres, using: comparator(for: sortDescriptor.direction)) else {
                         continue
-                    } else {
-                        return lhs.name > rhs.name
                     }
-                case (.height, .ascending):
-                    if lhs.heightInMetres == rhs.heightInMetres {
-                        continue
-                    } else {
-                        return lhs.heightInMetres < rhs.heightInMetres
-                    }
-                case (.height, .descending):
-                    if lhs.heightInMetres == rhs.heightInMetres {
-                        continue
-                    } else {
-                        return lhs.heightInMetres < rhs.heightInMetres
-                    }
+                    return result
                 }
             }
             //Need to tie break if we reach this point, as it means the two entries were same across all requested sort fields
             return false
         }
-        
-        
 
+        //Always filter, then sort, then cut the batch to size, to keep results consistent and accurate
         switch request.fetchLimit {
         case .full:
             break
@@ -204,36 +210,3 @@ class MunroDataSource {
         }
     }
 }
-
-@frozen
-enum SortDirection {
-    case ascending
-    case descending
-}
-
-struct SortDescriptor: Hashable {
-    let key: MunroSearchRequest.SortKey
-    let direction: SortDirection
-}
-
-struct MunroResult: Equatable {
-    let name: String
-    let height: Double
-    let category: Munro.MunroClassification
-    let gridReference: String
-}
-
-struct MunroSearchRequest {
-    
-    enum SortKey {
-        case name
-        case height
-    }
-    
-    var fetchLimit: SearchScope<UInt> = .full
-    var hillCategory: SearchScope<Munro.MunroClassification> = .full
-    var maximumHeight: SearchScope<Double> = .full
-    var minimumHeight: SearchScope<Double> = .full
-    var sortDescriptors: [SortDescriptor] = []
-}
-

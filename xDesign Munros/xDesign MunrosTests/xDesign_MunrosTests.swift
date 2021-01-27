@@ -70,7 +70,7 @@ class xDesign_MunrosTests: XCTestCase {
             let munros = try datasource.munros(for: request)
             
             XCTAssertEqual(munros.first?.name, "A\' Bhuidheanach Bheag")
-            XCTAssertEqual(munros.last?.name, "Tom Buidhe")
+            XCTAssertEqual(munros.last?.name, "Tom a\' Choinich - Tom a\' Choinich Beag")
         } catch {
             XCTFail("Unexpected error thrown: \(error)")
         }
