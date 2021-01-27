@@ -166,7 +166,7 @@ class MunroDataSource {
                     }
                 }
             }
-            //Need to tie break if we reach this point, as it means the two entries were same across al requested sort fields
+            //Need to tie break if we reach this point, as it means the two entries were same across all requested sort fields
             return false
         }
         
@@ -176,7 +176,7 @@ class MunroDataSource {
         case .full:
             break
         case .subset(let maxSize):
-            workingCopy = workingCopy.dropLast(workingCopy.count - maxSize)
+            workingCopy = workingCopy.dropLast(workingCopy.count - Int(maxSize))
         }
         
         let results = workingCopy.map({MunroResult(name: $0.name, height: $0.heightInMetres, category: $0.eraClassification.post1997, gridReference: $0.gridReference)})
@@ -230,7 +230,7 @@ struct MunroSearchRequest {
         case height
     }
     
-    var fetchLimit: SearchScope<Int> = .full
+    var fetchLimit: SearchScope<UInt> = .full
     var hillCategory: SearchScope<Munro.MunroClassification> = .full
     var maximumHeight: SearchScope<Double> = .full
     var minimumHeight: SearchScope<Double> = .full

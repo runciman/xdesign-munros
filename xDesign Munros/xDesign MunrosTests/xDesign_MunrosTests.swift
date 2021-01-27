@@ -95,5 +95,76 @@ class xDesign_MunrosTests: XCTestCase {
             XCTFail("Unexpected error thrown: \(error)")
         }
     }
+    
+    func testMultipleSortDescriptorsApplyInOrder() {
+        guard let file =  Bundle(for: type(of: self)).url(forResource: "munrotab_v6.2", withExtension: "csv") else {
+            XCTFail("No resource found for expected URL")
+            return
+        }
+        
+        do {
+            let datasource = try MunroDataSource(from: file)
+            var request = MunroSearchRequest()
+            request.fetchLimit = .subset(5)
+            request.sortDescriptors = [SortDescriptor(key: .height, direction: .ascending), SortDescriptor(key: .name, direction: .descending)]
+            let munros = try datasource.munros(for: request)
+            
+            XCTAssertEqual(munros[0].name, "Mullach Coire nan Cisteachan [Carn na Caim South Top]")
+            XCTAssertEqual(munros[1].name, "Beinn Teallach")
+            
+        } catch {
+            XCTFail("Unexpected error thrown: \(error)")
+        }
+    }
+    
+    func testMinHeightGreaterThanMaxHeightRequestThrowsError() {
+        guard let file =  Bundle(for: type(of: self)).url(forResource: "munrotab_v6.2", withExtension: "csv") else {
+            XCTFail("No resource found for expected URL")
+            return
+        }
+        
+        do {
+            let datasource = try MunroDataSource(from: file)
+            var request = MunroSearchRequest()
+            request.maximumHeight = .subset(4)
+            request.minimumHeight = .subset(5)
+            XCTAssertThrowsError(try datasource.munros(for: request))
+        } catch {
+            XCTFail("Unexpected error thrown: \(error)")
+        }
+    }
+    
+    func testFetchLimitLessThanZeroThrowsError() {
+        guard let file =  Bundle(for: type(of: self)).url(forResource: "munrotab_v6.2", withExtension: "csv") else {
+            XCTFail("No resource found for expected URL")
+            return
+        }
+        
+        do {
+            let datasource = try MunroDataSource(from: file)
+            var request = MunroSearchRequest()
+            request.fetchLimit = .subset(0)
+            XCTAssertThrowsError(try datasource.munros(for: request))
+        } catch {
+            XCTFail("Unexpected error thrown: \(error)")
+        }
+    }
+    
+    func testHillCategoryReturnsMatchingResults() {
+        guard let file =  Bundle(for: type(of: self)).url(forResource: "munrotab_v6.2", withExtension: "csv") else {
+            XCTFail("No resource found for expected URL")
+            return
+        }
+        
+        do {
+            let datasource = try MunroDataSource(from: file)
+            var request = MunroSearchRequest()
+            request.hillCategory = .subset(.top)
+            let munros = try datasource.munros(for: request)
+            XCTAssertEqual(munros.filter({ $0.category != .top }).count, 0)
+        } catch {
+            XCTFail("Unexpected error thrown: \(error)")
+        }
+    }
 
 }
