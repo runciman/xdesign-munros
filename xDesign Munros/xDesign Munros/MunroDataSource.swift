@@ -71,6 +71,7 @@ class MunroDataSource {
     
     enum Error: Swift.Error {
         case invalidURL
+        case invalidRequestValue(String)
     }
     
     private let munros: [Munro]
@@ -96,28 +97,44 @@ class MunroDataSource {
     }
     
     func munros(for request: MunroSearchRequest) -> [MunroResult] {
-        var workingCopy = munros.filter({$0.eraClassification.post1997 != .none })
         
-        switch request.hillCategory {
-        case .full:
-            break
-        case .subset(let category):
-            workingCopy = workingCopy.filter({ $0.eraClassification.post1997 == category})
+        
+        typealias MunroRequestFilter = (MunroSearchRequest, Munro) -> Bool
+        
+        let hillCategoryFilter: MunroRequestFilter = { (request, munro) in
+            
+            guard munro.eraClassification.post1997 != .none else {
+                return false
+            }
+            
+            switch request.hillCategory {
+            case .full:
+                return true
+            case .subset(let category):
+                return (munro.eraClassification.post1997 == category)
+            }
         }
         
-        switch request.maximumHeight {
-        case .full:
-            break
-        case .subset(let maxHeight):
-            workingCopy = workingCopy.filter({ $0.heightInMetres <= maxHeight})
+        let maxHeightFilter: MunroRequestFilter = { (request, munro) in
+            switch request.maximumHeight {
+            case .full:
+                return true
+            case .subset(let maxHeight):
+                return munro.heightInMetres <= maxHeight
+            }
         }
         
-        switch request.minimumHeight {
-        case .full:
-            break
-        case .subset(let minHeight):
-            workingCopy = workingCopy.filter({ $0.heightInMetres >= minHeight})
+        let minHeightFilter: MunroRequestFilter = { (request, munro) in
+            switch request.minimumHeight {
+            case .full:
+                return true
+            case .subset(let minHeight):
+                return munro.heightInMetres >= minHeight
+            }
         }
+
+        var workingCopy = munros.filter({ hillCategoryFilter(request, $0) && maxHeightFilter(request, $0) && minHeightFilter(request, $0) })
+        
         
         // TODO - sorting...
         
@@ -134,6 +151,26 @@ class MunroDataSource {
         
         return results
     }
+    
+    private func validate(_ request: MunroSearchRequest) throws {
+        switch (request.minimumHeight, request.maximumHeight) {
+        case (.subset(let minHeight), .subset(let maxHeight)):
+            guard minHeight <= maxHeight else {
+                throw MunroDataSource.Error.invalidRequestValue("maximumHeight should be greater than, or equal, to the minimumHeight")
+            }
+        default:
+            break
+        }
+
+        switch request.fetchLimit {
+        case .full:
+            break
+        case .subset(let maxSize):
+            guard maxSize > 0 else {
+                throw MunroDataSource.Error.invalidRequestValue("fetchLimit should be greater than zero")
+            }
+        }
+    }
 }
 
 @frozen
@@ -142,8 +179,8 @@ enum SortDirection {
     case descending
 }
 
-struct SortDescriptor<K, V>: Hashable {
-    let keyPath: KeyPath<K, V>
+struct SortDescriptor<K, Comparable>: Hashable {
+    let keyPath: KeyPath<K, Comparable>
     let direction: SortDirection
 }
 
