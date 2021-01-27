@@ -96,8 +96,9 @@ class MunroDataSource {
         }
     }
     
-    func munros(for request: MunroSearchRequest) -> [MunroResult] {
+    func munros(for request: MunroSearchRequest) throws -> [MunroResult] {
         
+        try validate(request)
         
         typealias MunroRequestFilter = (MunroSearchRequest, Munro) -> Bool
         
@@ -136,7 +137,38 @@ class MunroDataSource {
         var workingCopy = munros.filter({ hillCategoryFilter(request, $0) && maxHeightFilter(request, $0) && minHeightFilter(request, $0) })
         
         
-        // TODO - sorting...
+        workingCopy.sort { (lhs, rhs) -> Bool in
+            for sortDescriptor in request.sortDescriptors {
+                switch (sortDescriptor.key, sortDescriptor.direction) {
+                case (.name, .ascending):
+                    if lhs.name == rhs.name {
+                        continue
+                    } else {
+                        return lhs.name < rhs.name
+                    }
+                case (.name, .descending):
+                    if lhs.name == rhs.name {
+                        continue
+                    } else {
+                        return lhs.name > rhs.name
+                    }
+                case (.height, .ascending):
+                    if lhs.heightInMetres == rhs.heightInMetres {
+                        continue
+                    } else {
+                        return lhs.heightInMetres < rhs.heightInMetres
+                    }
+                case (.height, .descending):
+                    if lhs.heightInMetres == rhs.heightInMetres {
+                        continue
+                    } else {
+                        return lhs.heightInMetres < rhs.heightInMetres
+                    }
+                }
+            }
+            //Need to tie break if we reach this point, as it means the two entries were same across al requested sort fields
+            return false
+        }
         
         
 
@@ -179,8 +211,8 @@ enum SortDirection {
     case descending
 }
 
-struct SortDescriptor<K, Comparable>: Hashable {
-    let keyPath: KeyPath<K, Comparable>
+struct SortDescriptor: Hashable {
+    let key: MunroSearchRequest.SortKey
     let direction: SortDirection
 }
 
@@ -192,8 +224,16 @@ struct MunroResult: Equatable {
 }
 
 struct MunroSearchRequest {
+    
+    enum SortKey {
+        case name
+        case height
+    }
+    
     var fetchLimit: SearchScope<Int> = .full
     var hillCategory: SearchScope<Munro.MunroClassification> = .full
     var maximumHeight: SearchScope<Double> = .full
     var minimumHeight: SearchScope<Double> = .full
+    var sortDescriptors: [SortDescriptor] = []
 }
+

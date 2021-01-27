@@ -28,7 +28,7 @@ class xDesign_MunrosTests: XCTestCase {
         do {
             let datasource = try MunroDataSource(from: file)
             let request = MunroSearchRequest()
-            let munros = datasource.munros(for: request)
+            let munros = try datasource.munros(for: request)
             XCTAssertEqual(munros.count, 509)
         } catch {
             XCTFail("Unexpected error thrown: \(error)")
@@ -45,13 +45,52 @@ class xDesign_MunrosTests: XCTestCase {
             let datasource = try MunroDataSource(from: file)
             var request = MunroSearchRequest()
             request.fetchLimit = .subset(25)
-            let munros = datasource.munros(for: request)
+            let munros = try datasource.munros(for: request)
             
             let allMunrosRequest = MunroSearchRequest()
-            let allMunros = datasource.munros(for: allMunrosRequest)
+            let allMunros = try datasource.munros(for: allMunrosRequest)
             XCTAssertEqual(allMunros.count, 509)
             
             XCTAssertEqual(allMunros.dropLast(509 - 25), munros)
+        } catch {
+            XCTFail("Unexpected error thrown: \(error)")
+        }
+    }
+    
+    func testSortingReturnsAlphabetisedNames() {
+        guard let file =  Bundle(for: type(of: self)).url(forResource: "munrotab_v6.2", withExtension: "csv") else {
+            XCTFail("No resource found for expected URL")
+            return
+        }
+        
+        do {
+            let datasource = try MunroDataSource(from: file)
+            var request = MunroSearchRequest()
+            request.sortDescriptors = [SortDescriptor(key: .name, direction: .ascending)]
+            let munros = try datasource.munros(for: request)
+            
+            XCTAssertEqual(munros.first?.name, "A\' Bhuidheanach Bheag")
+            XCTAssertEqual(munros.last?.name, "Tom Buidhe")
+        } catch {
+            XCTFail("Unexpected error thrown: \(error)")
+        }
+    }
+    
+    func testFetchLimitAppliesToSortedEntries() {
+        guard let file =  Bundle(for: type(of: self)).url(forResource: "munrotab_v6.2", withExtension: "csv") else {
+            XCTFail("No resource found for expected URL")
+            return
+        }
+        
+        do {
+            let datasource = try MunroDataSource(from: file)
+            var request = MunroSearchRequest()
+            request.fetchLimit = .subset(25)
+            request.sortDescriptors = [SortDescriptor(key: .name, direction: .ascending)]
+            let munros = try datasource.munros(for: request)
+            
+            XCTAssertEqual(munros.first?.name, "A\' Bhuidheanach Bheag")
+            XCTAssertEqual(munros.last?.name, "An Socach")
         } catch {
             XCTFail("Unexpected error thrown: \(error)")
         }
