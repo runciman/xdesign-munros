@@ -28,7 +28,7 @@ struct SortDescriptor: Hashable {
 struct MunroResult: Equatable {
     let name: String
     let height: Double
-    let category: Munro.Classification
+    let category: MunroSearchRequest.MunroCategory
     let gridReference: String
 }
 
@@ -56,6 +56,7 @@ class MunroDataSource {
     enum Error: Swift.Error {
         case invalidURL
         case invalidRequestValue(String)
+        case invalidData
     }
     
     private let munros: [Munro]
@@ -106,7 +107,7 @@ class MunroDataSource {
                 return true
             case .subset(let category):
                 switch (munro.eraClassification.post1997, category) {
-                //This effectively provides a mapping from the internal Munro.Classification type, to the MunroSearchRequest.Category type
+                //This effectively provides a mapping from the internal Munro.Classification type, to the MunroSearchRequest.MunroCategory type
                 case (.munro, .munro), (.top, .top):
                     return true
                 default:
@@ -185,7 +186,19 @@ class MunroDataSource {
             workingCopy = workingCopy.dropLast(workingCopy.count - Int(maxSize))
         }
         
-        let results = workingCopy.map({MunroResult(name: $0.name, height: $0.heightInMetres, category: $0.eraClassification.post1997, gridReference: $0.gridReference)})
+        let resultCategoryMapping: (Munro.Classification) throws -> MunroSearchRequest.MunroCategory = { classification in
+            switch classification {
+            case .top:
+                return .top
+            case .munro:
+                return .munro
+            case .none:
+                print("Munros with this category should not exist by this moment")
+                throw Error.invalidData
+            }
+        }
+        
+        let results = try workingCopy.map({MunroResult(name: $0.name, height: $0.heightInMetres, category: try resultCategoryMapping($0.eraClassification.post1997), gridReference: $0.gridReference)})
         
         return results
     }
