@@ -13,50 +13,6 @@ enum SearchScope<T> {
     case subset(T)
 }
 
-
-
-struct SortDescriptor<Key> {
-    
-    @frozen
-    enum Order {
-        case ascending
-        case descending
-    }
-    
-    @frozen
-    enum Comparison {
-        case equal
-        case lessThan
-        case greaterThan
-        
-        init(from stdlibComparison: Bool) {
-            if stdlibComparison {
-                self = .greaterThan
-            } else {
-                self = .lessThan
-            }
-        }
-    }
-    
-    let compare: (Key, Key) -> Comparison
-    
-    init<Value: Comparable>(sort keyPath: KeyPath<Key, Value>, in direction: Order) {
-        compare = { (lhs, rhs) in
-            
-            if lhs[keyPath: keyPath] == rhs[keyPath: keyPath] {
-                return .equal
-            }
-            
-            switch direction {
-            case .ascending:
-                return Comparison(from: lhs[keyPath: keyPath] < rhs[keyPath: keyPath])
-            case .descending:
-                return Comparison(from: lhs[keyPath: keyPath] > rhs[keyPath: keyPath])
-            }
-        }
-    }
-}
-
 /// A `struct` representing the results of a search for Munros
 struct MunroResult: Equatable {
     let name: String
@@ -65,13 +21,9 @@ struct MunroResult: Equatable {
     let gridReference: String
 }
 
+/// A `struct` that represents a search against a datasource. Default values fetch all possible entries
 struct MunroSearchRequest {
-    
-    enum SortKey {
-        case name
-        case height
-    }
-    
+
     enum MunroCategory {
         case munro
         case top
@@ -84,6 +36,8 @@ struct MunroSearchRequest {
     var sortDescriptors: [SortDescriptor<MunroResult>] = []
 }
 
+
+/// A data source for providing information about munros
 class MunroDataSource {
     
     enum Error: Swift.Error {
@@ -93,7 +47,6 @@ class MunroDataSource {
     }
     
     private let munros: [Munro]
-    
     
     /// Creates an instance of `MunroDataSource`, which is populated by entries from a CSV file at a given URL
     /// - Parameter csv: The `URL` of the CSV file to load
@@ -117,7 +70,6 @@ class MunroDataSource {
             self.munros = munros
         }
     }
-    
     
     /// Returns instances of `MunroResult`, which match the criteria specified in the `MunroSearchRequest` instance
     /// - Parameter request: The request to use as a basis for sorting and filtering the results
@@ -190,14 +142,15 @@ class MunroDataSource {
                 let comparisonResult: SortDescriptor.Comparison = comparator(lhs, rhs)
                 switch comparisonResult {
                 case .equal:
-                continue
+                    //If lhs and rhs were equal, we continue and let the next sort descriptor try sort it
+                    continue
                 case .lessThan:
                     return false
                 case .greaterThan:
                     return true
                 }
             }
-            //Need to tie break if we reach this point, as it means the two entries were same across all requested sort fields
+            //Need to tie break if we reach this point, as it means the two entries were the same across all requested sort fields
             return false
         }
 
