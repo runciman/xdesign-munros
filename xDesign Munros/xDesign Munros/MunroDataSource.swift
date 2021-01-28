@@ -13,32 +13,31 @@ public enum SearchScope<T> {
     case subset(T)
 }
 
-/// A `struct` representing the results of a search for Munros
-public struct MunroResult: Equatable {
-    let name: String
-    let height: Double
-    let category: MunroSearchRequest.MunroCategory
-    let gridReference: String
-}
-
-/// A `struct` that represents a search against a datasource. Default values fetch all possible entries
-public struct MunroSearchRequest {
-
-    enum MunroCategory {
-        case munro
-        case top
-    }
-    
-    var fetchLimit: SearchScope<UInt> = .full
-    var hillCategory: SearchScope<MunroCategory> = .full
-    var maximumHeight: SearchScope<Double> = .full
-    var minimumHeight: SearchScope<Double> = .full
-    var sortDescriptors: [SortDescriptor<MunroResult>] = []
-}
-
-
 /// A data source for providing information about munros
 public class MunroDataSource {
+    
+    /// A `struct` representing the results of a search for Munros
+    public struct Result: Equatable {
+        let name: String
+        let height: Double
+        let category: MunroDataSource.Request.MunroCategory
+        let gridReference: String
+    }
+    
+    /// A `struct` that represents a search against a datasource. Default values fetch all possible entries
+    public struct Request {
+
+        enum MunroCategory {
+            case munro
+            case top
+        }
+        
+        var fetchLimit: SearchScope<UInt> = .full
+        var hillCategory: SearchScope<MunroCategory> = .full
+        var maximumHeight: SearchScope<Double> = .full
+        var minimumHeight: SearchScope<Double> = .full
+        var sortDescriptors: [SortDescriptor<MunroDataSource.Result>] = []
+    }
     
     enum Error: Swift.Error {
         case invalidURL
@@ -75,11 +74,11 @@ public class MunroDataSource {
     /// - Parameter request: The request to use as a basis for sorting and filtering the results
     /// - Throws: Errors will be thrown if the request is not a valid request that can be performed in some way
     /// - Returns: A `Collection` of  `MunroResult`
-    public func munros(for request: MunroSearchRequest) throws -> [MunroResult] {
+    public func munros(for request: MunroDataSource.Request) throws -> [MunroDataSource.Result] {
         
         try validate(request)
         
-        typealias MunroRequestFilter = (MunroSearchRequest, Munro) -> Bool
+        typealias MunroRequestFilter = (MunroDataSource.Request, Munro) -> Bool
         
         let hillCategoryFilter: MunroRequestFilter = { (request, munro) in
             
@@ -122,7 +121,7 @@ public class MunroDataSource {
         //By defining these as closures ahead of time, we can avoid having to do three seperate filter calls
         let workingCopy = munros.filter({ hillCategoryFilter(request, $0) && maxHeightFilter(request, $0) && minHeightFilter(request, $0) })
         
-        let resultCategoryMapping: (Munro.Classification) throws -> MunroSearchRequest.MunroCategory = { classification in
+        let resultCategoryMapping: (Munro.Classification) throws -> Request.MunroCategory = { classification in
             switch classification {
             case .top:
                 return .top
@@ -134,7 +133,7 @@ public class MunroDataSource {
             }
         }
         
-        var filteredResults = try workingCopy.map({MunroResult(name: $0.name, height: $0.heightInMetres, category: try resultCategoryMapping($0.eraClassification.post1997), gridReference: $0.gridReference)})
+        var filteredResults = try workingCopy.map({MunroDataSource.Result(name: $0.name, height: $0.heightInMetres, category: try resultCategoryMapping($0.eraClassification.post1997), gridReference: $0.gridReference)})
         
         filteredResults.sort { (lhs, rhs) -> Bool in
             for sortDescriptor in request.sortDescriptors {
@@ -165,7 +164,7 @@ public class MunroDataSource {
         return filteredResults
     }
     
-    private func validate(_ request: MunroSearchRequest) throws {
+    private func validate(_ request: MunroDataSource.Request) throws {
         switch (request.minimumHeight, request.maximumHeight) {
         case (.subset(let minHeight), .subset(let maxHeight)):
             guard minHeight <= maxHeight else {
