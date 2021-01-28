@@ -66,7 +66,7 @@ class xDesign_MunrosTests: XCTestCase {
         do {
             let datasource = try MunroDataSource(from: file)
             var request = MunroSearchRequest()
-            request.sortDescriptors = [SortDescriptor(key: .name, direction: .ascending)]
+            request.sortDescriptors = [SortDescriptor(sort: \MunroResult.name, in: .ascending)]
             let munros = try datasource.munros(for: request)
             
             XCTAssertEqual(munros.first?.name, "A\' Bhuidheanach Bheag")
@@ -86,7 +86,7 @@ class xDesign_MunrosTests: XCTestCase {
             let datasource = try MunroDataSource(from: file)
             var request = MunroSearchRequest()
             request.fetchLimit = .subset(25)
-            request.sortDescriptors = [SortDescriptor(key: .name, direction: .ascending)]
+            request.sortDescriptors = [SortDescriptor(sort: \MunroResult.name, in: .ascending)]
             let munros = try datasource.munros(for: request)
             
             XCTAssertEqual(munros.first?.name, "A\' Bhuidheanach Bheag")
@@ -106,7 +106,7 @@ class xDesign_MunrosTests: XCTestCase {
             let datasource = try MunroDataSource(from: file)
             var request = MunroSearchRequest()
             request.fetchLimit = .subset(5)
-            request.sortDescriptors = [SortDescriptor(key: .height, direction: .ascending), SortDescriptor(key: .name, direction: .descending)]
+            request.sortDescriptors = [SortDescriptor(sort: \MunroResult.height, in: .ascending), SortDescriptor(sort: \MunroResult.name, in: .descending)]
             let munros = try datasource.munros(for: request)
             
             XCTAssertEqual(munros[0].name, "Mullach Coire nan Cisteachan [Carn na Caim South Top]")
