@@ -8,6 +8,7 @@
 import Foundation
 
 
+/// A data object which stores information about Munros
 struct Munro {
     
     enum Classification: String {
@@ -59,6 +60,9 @@ extension Munro {
         case typeMismatch(entryName: String)
     }
     
+    /// Intended to be used as an init from a CSV file
+    /// - Parameter entries: An instance of `[String]` which should be the result of a line split over commas from a CSV file
+    /// - Throws: Errors will be thrown if `entries` is not valid in length or contents
     init<T>(_ entries: [T]) throws where T: StringProtocol {
         guard entries.count == 29 else {
             throw Munro.Error.missingEntries

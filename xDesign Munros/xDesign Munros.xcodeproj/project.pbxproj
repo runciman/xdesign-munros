@@ -12,7 +12,6 @@
 		7EA9A7C225BDB93000FEBF7D /* xDesign_Munros.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EA9A7B825BDB93000FEBF7D /* xDesign_Munros.framework */; };
 		7EA9A7C725BDB93000FEBF7D /* xDesign_MunrosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA9A7C625BDB93000FEBF7D /* xDesign_MunrosTests.swift */; };
 		7EA9A7C925BDB93000FEBF7D /* xDesign_Munros.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EA9A7BB25BDB93000FEBF7D /* xDesign_Munros.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		7EA9A7D525BDB97400FEBF7D /* munrotab_v6.2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 7EA9A7D425BDB97400FEBF7D /* munrotab_v6.2.csv */; };
 		7EA9A7D925BDBB5700FEBF7D /* Munro.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA9A7D825BDBB5700FEBF7D /* Munro.swift */; };
 		7EA9A7E025BDD96300FEBF7D /* munrotab_v6.2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 7EA9A7D425BDB97400FEBF7D /* munrotab_v6.2.csv */; };
 		7EA9A7E425C0B97000FEBF7D /* MunroDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA9A7E325C0B97000FEBF7D /* MunroDataSource.swift */; };
@@ -84,7 +83,6 @@
 			children = (
 				7EA9A7BB25BDB93000FEBF7D /* xDesign_Munros.h */,
 				7EA9A7BC25BDB93000FEBF7D /* Info.plist */,
-				7EA9A7D425BDB97400FEBF7D /* munrotab_v6.2.csv */,
 				7EA9A7D825BDBB5700FEBF7D /* Munro.swift */,
 				7EA9A7E325C0B97000FEBF7D /* MunroDataSource.swift */,
 				7E0FF2F525C21C2300E950CB /* CSVParser.swift */,
@@ -97,6 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				7EA9A7C625BDB93000FEBF7D /* xDesign_MunrosTests.swift */,
+				7EA9A7D425BDB97400FEBF7D /* munrotab_v6.2.csv */,
 				7EA9A7C825BDB93000FEBF7D /* Info.plist */,
 			);
 			path = "xDesign MunrosTests";
@@ -194,7 +193,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7EA9A7D525BDB97400FEBF7D /* munrotab_v6.2.csv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
