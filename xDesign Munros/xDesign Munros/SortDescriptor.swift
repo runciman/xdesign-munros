@@ -8,22 +8,21 @@
 import Foundation
 
 /// Providers a wrapper around sorting `Comparable` values from an instance of a `KeyPath`
-struct SortDescriptor<Key> {
+public struct SortDescriptor<Key> {
     
     @frozen
     /// The order in which sort results should be returned
-    enum Order {
+    public enum Order {
         case ascending
         case descending
     }
     
     @frozen
     /// Describes the result of a comparison
-    enum Comparison {
+    public enum Comparison {
         case equal
         case lessThan
         case greaterThan
-        
         
         /// The standard library sort function uses `true` for "greater than", and `false` for "less than"
         /// This `init` provides a mapping from those values to an instance of `Self`
@@ -38,13 +37,13 @@ struct SortDescriptor<Key> {
     }
     
     /// Performs a comparson between two instances of `Key`, and returns the result as an instance of `Comparison`
-    let compare: (Key, Key) -> Comparison
+    public let compare: (Key, Key) -> Comparison
     
     /// Creates an instance of `Self`, that is able to perform a sort based on `keyPath`
     /// - Parameters:
     ///   - keyPath: The `KeyPath` which should be sorted on. Must point to a `Comparable`
     ///   - direction: The direction in which results should be ordered
-    init<Value: Comparable>(sort keyPath: KeyPath<Key, Value>, in direction: Order) {
+    public init<Value: Comparable>(sort keyPath: KeyPath<Key, Value>, in direction: Order) {
         compare = { (lhs, rhs) in
             
             if lhs[keyPath: keyPath] == rhs[keyPath: keyPath] {

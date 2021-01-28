@@ -8,13 +8,13 @@
 import Foundation
 
 /// Wraps up the idea of limiting values to a certain range,  without using tricks such as`"<0 is equivalent to ignoring a given field"`
-enum SearchScope<T> {
+public enum SearchScope<T> {
     case full
     case subset(T)
 }
 
 /// A `struct` representing the results of a search for Munros
-struct MunroResult: Equatable {
+public struct MunroResult: Equatable {
     let name: String
     let height: Double
     let category: MunroSearchRequest.MunroCategory
@@ -22,7 +22,7 @@ struct MunroResult: Equatable {
 }
 
 /// A `struct` that represents a search against a datasource. Default values fetch all possible entries
-struct MunroSearchRequest {
+public struct MunroSearchRequest {
 
     enum MunroCategory {
         case munro
@@ -38,7 +38,7 @@ struct MunroSearchRequest {
 
 
 /// A data source for providing information about munros
-class MunroDataSource {
+public class MunroDataSource {
     
     enum Error: Swift.Error {
         case invalidURL
@@ -51,7 +51,7 @@ class MunroDataSource {
     /// Creates an instance of `MunroDataSource`, which is populated by entries from a CSV file at a given URL
     /// - Parameter csv: The `URL` of the CSV file to load
     /// - Throws: If the `URL` is a not a local path, or if the CSV could not be parsed
-    init(from csv: URL) throws {
+    public init(from csv: URL) throws {
         guard csv.isFileURL else {
             throw Error.invalidURL
         }
@@ -75,7 +75,7 @@ class MunroDataSource {
     /// - Parameter request: The request to use as a basis for sorting and filtering the results
     /// - Throws: Errors will be thrown if the request is not a valid request that can be performed in some way
     /// - Returns: A `Collection` of  `MunroResult`
-    func munros(for request: MunroSearchRequest) throws -> [MunroResult] {
+    public func munros(for request: MunroSearchRequest) throws -> [MunroResult] {
         
         try validate(request)
         
